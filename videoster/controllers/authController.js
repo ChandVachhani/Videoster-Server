@@ -3,6 +3,7 @@ const users = require("../models/users");
 const channels = require("../models/channels");
 const videos = require("../models/videos");
 const connect = require("../models/connect");
+const jwt = require("jsonwebtoken");
 
 const { Op } = require("sequelize");
 
@@ -21,16 +22,20 @@ exports.Login = async (req, res, next) => {
     }
     else {
       if (password == user.password) {
+        const token = jwt.sign({
+          userName
+        }, "Videoster");
         res.status(200).json({
           message: "Successfully LoggedIn",
-          userid: user.userId,
-          userName: user.userName
+          userId: user.userId,
+          userName: user.userName,
+          token
         });
       }
       else {
         res.status(401).json({
           message: "Wrong Credentials!"
-        })
+        });
       }
     }
   }
