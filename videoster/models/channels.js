@@ -25,15 +25,15 @@ const channels = sequelize.define("channels", {
     allowNull: false
   },
   viewsCount: {
-    type: Sequelize.STRING,
+    type: Sequelize.INTEGER,
     allowNull: false
   },
   subscribersCount: {
-    type: Sequelize.STRING,
+    type: Sequelize.INTEGER,
     allowNull: false
   },
   videoCount: {
-    type: Sequelize.STRING,
+    type: Sequelize.INTEGER,
     allowNull: false
   },
 })
