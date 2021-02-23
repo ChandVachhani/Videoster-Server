@@ -77,7 +77,7 @@ exports.searchChannelsById = async (req, res, next) => {
 }
 
 exports.addChannels = async (req, res, next) => {
-  // will get channelIds instade of channels and also add videos in this component
+  // will get channelIds instade of channels and also add videos in this component.
   let { category, channels } = req.body;
   try {
     category = req.user.userId + "." + category;
@@ -91,7 +91,7 @@ exports.addChannels = async (req, res, next) => {
         message: "category Not Found!"
       });
     }
-    console.log("==>", requiredCategory);
+    let channelIds = [];
     for (i in channels) {
       const channel = await requiredCategory.createChannel({
         channelId: channels[i].channelId,
@@ -103,46 +103,82 @@ exports.addChannels = async (req, res, next) => {
         subscribersCount: channels[i].subscribersCount,
         videoCount: channels[i].videoCount
       });
-      channel.addCategory(requiredCategory);
+      channels[i] = {
+        channelId: channels[i].channelId,
+        name: channels[i].name,
+        description: channels[i].description,
+        avatarDefault: channels[i].avatarDefault,
+        avatarHigh: channels[i].avatarHigh,
+        viewsCount: channels[i].viewsCount,
+        subscribersCount: channels[i].subscribersCount,
+        videoCount: channels[i].videoCount
+      }
+      await channel.addCategory(requiredCategory);
+      channelIds.push(channels[i].channelId);
     }
-    res.status(200).json({
-      message: "channels Successfully added!"
-    })
+    // res.status(200).json({
+    //   message: "channels Successfully added!"
+    // })
+    req.body.channels = channels;
+    req.body.channelIds = channelIds;
+    next();
   }
   catch (err) {
     console.log(err);
     res.status(401).json({
-      message: "Some Error Occured!"
+      message: "Some Error Occured in addchannels!"
     });
   }
 }
 
 exports.addVideos = async (req, res, next) => {
-  let { channelId, videos } = req.body;
+  const { channelIds, channels } = req.body;
   try {
-    const requiredChannel = await channels.findOne({
-      where: {
-        channelId
+    for (i in channelIds) {
+      const channelId = channelIds[i];
+      const result = await YT.get('/search', {
+        params: {
+          part: "snippet",
+          channelId,
+          maxResult: 2,
+          order: "date",
+          type: "video"
+        }
+      });
+      const videos = result.data.items;
+
+      const requiredChannel = await channels.findOne({
+        where: {
+          channelId
+        }
+      });
+      if (!requiredChannel) {
+        res.status(401).json({
+          message: "channel Not Found!"
+        });
       }
-    });
-    if (!requiredChannel) {
-      res.status(401).json({
-        message: "channel Not Found!"
-      });
-    }
-    console.log("==>", requiredChannel);
-    for (i in videos) {
-      await requiredChannel.createVideo({
-        videoId: videos[i].videoId,
-        description: videos[i].description,
-        avatarDefault: videos[i].avatarDefault,
-        avatarHigh: videos[i].avatarHigh,
-        title: videos[i].title,
-      });
+      for (ind in videos) {
+        await requiredChannel.createVideo({
+          videoId: videos[ind].videoId,
+          description: videos[ind].description,
+          avatarDefault: videos[ind].avatarDefault,
+          avatarHigh: videos[ind].avatarHigh,
+          title: videos[ind].title
+        });
+        videos[ind] = {
+          videoId: videos[ind].videoId,
+          description: videos[ind].description,
+          avatarDefault: videos[ind].avatarDefault,
+          avatarHigh: videos[ind].avatarHigh,
+          title: videos[ind].title
+        }
+      }
+      channels[i].videos = videos;
     }
     res.status(200).json({
-      message: "Videos Successfully added!"
-    })
+      message: "Channels and Videos Successfully added!",
+      channels
+    });
   }
   catch (err) {
     console.log(err);
