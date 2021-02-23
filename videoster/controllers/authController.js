@@ -23,7 +23,7 @@ exports.Login = async (req, res, next) => {
     else {
       if (password == user.password) {
         const token = jwt.sign({
-          userName
+          userId: user.userId
         }, "Videoster");
         res.status(200).json({
           message: "Successfully LoggedIn",

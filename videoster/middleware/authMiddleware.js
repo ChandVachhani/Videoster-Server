@@ -8,6 +8,7 @@ exports.verifyLogin = async (req, res, next) => {
     const payload = jwt.verify(token, "Videoster");
     if (payload) {
       const { userId } = payload;
+      console.log(userId);
       req.user = await users.findOne({
         where: {
           userId

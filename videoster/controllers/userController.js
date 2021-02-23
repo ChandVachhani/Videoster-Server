@@ -2,6 +2,8 @@ const categories = require("../models/categories");
 const users = require("../models/users");
 const channels = require("../models/channels");
 
+const { YT } = require("../apis/YT");
+
 exports.addCategory = async (req, res, next) => {
   let { category } = req.body;
   try {
@@ -21,8 +23,57 @@ exports.addCategory = async (req, res, next) => {
   }
 }
 
-exports.searchChannels = (req, res, next) => {
-  // given a search word
+exports.searchChannels = async (req, res, next) => {
+  const { searchWord } = req.body;
+  try {
+    const result = await YT.get('/search', {
+      params: {
+        maxResult: 5,
+        part: "snippet",
+        q: searchWord,
+        type: "channel"
+      }
+    });
+    let data = result.data.items;
+    data = data.map((item) => {
+      return item.id.channelId
+    });
+    req.body.channelIds = data;
+    next();
+  }
+  catch (err) {
+    res.status(401).json({
+      message: "Some Error occured in fetching channels from YT!",
+      err
+    })
+  }
+}
+
+exports.searchChannelsById = async (req, res, next) => {
+  const { channelIds } = req.body;
+  try {
+    let channels = [];
+    for (i in channelIds) {
+      channelId = channelIds[i];
+      const result = await YT.get('/channels', {
+        params: {
+          part: "snippet,contentDetails,statistics",
+          id: channelId
+        }
+      });
+      let data = result.data.items[0];
+      channels.push(data);
+    }
+    res.status(200).json({
+      data: channels
+    });
+  }
+  catch (err) {
+    res.status(401).json({
+      message: "Some Error occured in fetching channel from YT!",
+      err
+    })
+  }
 }
 
 exports.addChannels = async (req, res, next) => {
