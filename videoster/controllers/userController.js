@@ -3,21 +3,15 @@ const users = require("../models/users");
 const channels = require("../models/channels");
 
 exports.addCategory = async (req, res, next) => {
-  let { userId, category } = req.body;
+  let { category } = req.body;
   try {
-    const user = await users.findOne({
-      where: {
-        userId
-      }
-    });
-    category = userId + "." + category;
-    const x = await user.createCategory({
+    category = req.user.userId + "." + category;
+    const x = await req.user.createCategory({
       name: category
     });
-    console.log("==>", x);
     res.status(200).json({
       message: "Category Successfully added!"
-    })
+    });
   }
   catch (err) {
     console.log(err);
@@ -27,15 +21,15 @@ exports.addCategory = async (req, res, next) => {
   }
 }
 
+exports.searchChannels = (req, res, next) => {
+  // given a search word
+}
+
 exports.addChannels = async (req, res, next) => {
-  let { userId, category, channels } = req.body;
+  // will get channelIds instade of channels and also add videos in this component
+  let { category, channels } = req.body;
   try {
-    // const user = await users.findOne({
-    //   where: {
-    //     userId
-    //   }
-    // });
-    category = userId + "." + category;
+    category = req.user.userId + "." + category;
     const requiredCategory = await categories.findOne({
       where: {
         name: category
@@ -73,7 +67,7 @@ exports.addChannels = async (req, res, next) => {
 }
 
 exports.addVideos = async (req, res, next) => {
-  let { userId, channelId, videos } = req.body;
+  let { channelId, videos } = req.body;
   try {
     const requiredChannel = await channels.findOne({
       where: {

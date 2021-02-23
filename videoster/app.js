@@ -5,6 +5,8 @@ const cors = require("cors");
 const auth = require("./routes/auth");
 const user = require("./routes/users");
 
+const authMiddleware = require("./middleware/authMiddleware");
+
 const db = require("./utils/database");
 
 app.use(bodyParser.json());
@@ -23,6 +25,9 @@ app.use(cors());
 db.sync();
 
 app.use("/auth", auth);
+
+app.use(authMiddleware.verifyLogin);
+
 app.use("/users", user);
 
 app.listen(3001);
