@@ -77,7 +77,6 @@ exports.searchChannelsById = async (req, res, next) => {
 }
 
 exports.addChannels = async (req, res, next) => {
-  // will get channelIds instade of channels and also add videos in this component.
   let { category, channels } = req.body;
   try {
     category = req.user.userId + "." + category;
@@ -116,9 +115,6 @@ exports.addChannels = async (req, res, next) => {
       await channel.addCategory(requiredCategory);
       channelIds.push(channels[i].channelId);
     }
-    // res.status(200).json({
-    //   message: "channels Successfully added!"
-    // })
     req.body.channels = channels;
     req.body.channelIds = channelIds;
     next();
@@ -183,7 +179,46 @@ exports.addVideos = async (req, res, next) => {
   catch (err) {
     console.log(err);
     res.status(401).json({
-      message: "Some Error Occured!"
+      message: "Some Error Occured in adding Videos!"
+    });
+  }
+}
+
+exports.getCategories = async (req, res, next) => {
+  try {
+    const categories = await req.user.getCategories();
+    for (i in categories) {
+      const category = categories[i];
+      const channels = await category.getChannels();
+
+      for (j in channels) {
+        const channel = channels[j];
+        const videos = await channel.getVideos();
+        channels[j] = {
+          channelId: channels[i].channelId,
+          name: channels[i].name,
+          description: channels[i].description,
+          avatarDefault: channels[i].avatarDefault,
+          avatarHigh: channels[i].avatarHigh,
+          viewsCount: channels[i].viewsCount,
+          subscribersCount: channels[i].subscribersCount,
+          videoCount: channels[i].videoCount,
+          videos
+        }
+      }
+      categories[i] = {
+        name: (categories[i].dataValues.name.split(".")[1]),
+        channels
+      }
+    }
+    res.status(200).json({
+      categories
+    })
+  }
+  catch (err) {
+    console.log(err);
+    res.status(401).json({
+      message: "Some Error Occured in fetching categories!",
     });
   }
 }

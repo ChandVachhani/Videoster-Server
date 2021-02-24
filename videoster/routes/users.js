@@ -8,6 +8,6 @@ router.post("/searchChannels", userController.searchChannels, userController.sea
 router.post("/searchChannelsById", userController.searchChannelsById);
 router.post("/addChannels", userController.addChannels, userController.addVideos);
 router.post("/addVideos", userController.addVideos);
-
+router.get("/getCategories", userController.getCategories);
 
 module.exports = router;
