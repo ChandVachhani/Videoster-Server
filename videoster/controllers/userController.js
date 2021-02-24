@@ -77,7 +77,8 @@ exports.searchChannelsById = async (req, res, next) => {
 }
 
 exports.addChannels = async (req, res, next) => {
-  let { category, channels } = req.body;
+  let { category, givenchannels } = req.body;
+  console.log(category, givenchannels);
   try {
     category = req.user.userId + "." + category;
     const requiredCategory = await categories.findOne({
@@ -91,31 +92,31 @@ exports.addChannels = async (req, res, next) => {
       });
     }
     let channelIds = [];
-    for (i in channels) {
+    for (i in givenchannels) {
       const channel = await requiredCategory.createChannel({
-        channelId: channels[i].channelId,
-        name: channels[i].name,
-        description: channels[i].description,
-        avatarDefault: channels[i].avatarDefault,
-        avatarHigh: channels[i].avatarHigh,
-        viewsCount: channels[i].viewsCount,
-        subscribersCount: channels[i].subscribersCount,
-        videoCount: channels[i].videoCount
+        channelId: givenchannels[i].channelId,
+        name: givenchannels[i].name,
+        description: givenchannels[i].description,
+        avatarDefault: givenchannels[i].avatarDefault,
+        avatarHigh: givenchannels[i].avatarHigh,
+        viewsCount: givenchannels[i].viewsCount,
+        subscribersCount: givenchannels[i].subscribersCount,
+        videoCount: givenchannels[i].videoCount
       });
-      channels[i] = {
-        channelId: channels[i].channelId,
-        name: channels[i].name,
-        description: channels[i].description,
-        avatarDefault: channels[i].avatarDefault,
-        avatarHigh: channels[i].avatarHigh,
-        viewsCount: channels[i].viewsCount,
-        subscribersCount: channels[i].subscribersCount,
-        videoCount: channels[i].videoCount
+      givenchannels[i] = {
+        channelId: givenchannels[i].channelId,
+        name: givenchannels[i].name,
+        description: givenchannels[i].description,
+        avatarDefault: givenchannels[i].avatarDefault,
+        avatarHigh: givenchannels[i].avatarHigh,
+        viewsCount: givenchannels[i].viewsCount,
+        subscribersCount: givenchannels[i].subscribersCount,
+        videoCount: givenchannels[i].videoCount
       }
       await channel.addCategory(requiredCategory);
-      channelIds.push(channels[i].channelId);
+      channelIds.push(givenchannels[i].channelId);
     }
-    req.body.channels = channels;
+    req.body.channels = givenchannels;
     req.body.channelIds = channelIds;
     next();
   }
@@ -128,7 +129,8 @@ exports.addChannels = async (req, res, next) => {
 }
 
 exports.addVideos = async (req, res, next) => {
-  const { channelIds, channels } = req.body;
+  const { channelIds } = req.body;
+  const givenChannels = req.body.channels;
   try {
     for (i in channelIds) {
       const channelId = channelIds[i];
@@ -141,7 +143,7 @@ exports.addVideos = async (req, res, next) => {
           type: "video"
         }
       });
-      const videos = result.data.items;
+      const fetchedVideos = result.data.items;
 
       const requiredChannel = await channels.findOne({
         where: {
@@ -153,27 +155,27 @@ exports.addVideos = async (req, res, next) => {
           message: "channel Not Found!"
         });
       }
-      for (ind in videos) {
+      for (ind in fetchedVideos) {
         await requiredChannel.createVideo({
-          videoId: videos[ind].videoId,
-          description: videos[ind].description,
-          avatarDefault: videos[ind].avatarDefault,
-          avatarHigh: videos[ind].avatarHigh,
-          title: videos[ind].title
+          videoId: fetchedVideos[ind].id.videoId,
+          description: fetchedVideos[ind].snippet.description,
+          avatarDefault: fetchedVideos[ind].snippet.thumbnails.default.url,
+          avatarHigh: fetchedVideos[ind].snippet.thumbnails.high.url,
+          title: fetchedVideos[ind].snippet.title
         });
-        videos[ind] = {
-          videoId: videos[ind].videoId,
-          description: videos[ind].description,
-          avatarDefault: videos[ind].avatarDefault,
-          avatarHigh: videos[ind].avatarHigh,
-          title: videos[ind].title
+        fetchedVideos[ind] = {
+          videoId: fetchedVideos[ind].id.videoId,
+          description: fetchedVideos[ind].snippet.description,
+          avatarDefault: fetchedVideos[ind].snippet.thumbnails.default.url,
+          avatarHigh: fetchedVideos[ind].snippet.thumbnails.high.url,
+          title: fetchedVideos[ind].snippet.title
         }
       }
-      channels[i].videos = videos;
+      givenChannels[i].videos = fetchedVideos;
     }
     res.status(200).json({
       message: "Channels and Videos Successfully added!",
-      channels
+      channels: givenChannels
     });
   }
   catch (err) {
@@ -186,6 +188,7 @@ exports.addVideos = async (req, res, next) => {
 
 exports.getCategories = async (req, res, next) => {
   try {
+    let requiredData = {};
     const categories = await req.user.getCategories();
     for (i in categories) {
       const category = categories[i];
@@ -195,24 +198,21 @@ exports.getCategories = async (req, res, next) => {
         const channel = channels[j];
         const videos = await channel.getVideos();
         channels[j] = {
-          channelId: channels[i].channelId,
-          name: channels[i].name,
-          description: channels[i].description,
-          avatarDefault: channels[i].avatarDefault,
-          avatarHigh: channels[i].avatarHigh,
-          viewsCount: channels[i].viewsCount,
-          subscribersCount: channels[i].subscribersCount,
-          videoCount: channels[i].videoCount,
+          channelId: channels[j].channelId,
+          name: channels[j].name,
+          description: channels[j].description,
+          avatarDefault: channels[j].avatarDefault,
+          avatarHigh: channels[j].avatarHigh,
+          viewsCount: channels[j].viewsCount,
+          subscribersCount: channels[j].subscribersCount,
+          videoCount: channels[j].videoCount,
           videos
         }
       }
-      categories[i] = {
-        name: (categories[i].dataValues.name.split(".")[1]),
-        channels
-      }
+      requiredData[categories[i].dataValues.name.split(".")[1]] = channels;
     }
     res.status(200).json({
-      categories
+      requiredData
     })
   }
   catch (err) {

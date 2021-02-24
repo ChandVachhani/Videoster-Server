@@ -9,8 +9,8 @@ const videos = sequelize.define("videos", {
     primaryKey: true
   },
   description: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.STRING(500),
+    // allowNull: false
   },
   avatarDefault: {
     type: Sequelize.STRING,

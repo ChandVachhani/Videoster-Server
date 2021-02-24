@@ -13,8 +13,8 @@ const channels = sequelize.define("channels", {
     allowNull: false
   },
   description: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.STRING(500),
+    // allowNull: false
   },
   avatarDefault: {
     type: Sequelize.STRING,
@@ -30,7 +30,7 @@ const channels = sequelize.define("channels", {
   },
   subscribersCount: {
     type: Sequelize.INTEGER,
-    allowNull: false
+    // allowNull: false
   },
   videoCount: {
     type: Sequelize.INTEGER,

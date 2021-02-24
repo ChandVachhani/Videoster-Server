@@ -4,8 +4,9 @@ const users = require("../models/users");
 
 exports.verifyLogin = async (req, res, next) => {
   try {
-    const token = req.headers.authorization;
+    const token = req.headers.authorization.split(" ")[1];
     const payload = jwt.verify(token, "Videoster");
+    console.log(token);
     if (payload) {
       const { userId } = payload;
       console.log(userId);
