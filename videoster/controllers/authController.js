@@ -12,40 +12,40 @@ exports.Login = async (req, res, next) => {
   try {
     const user = await users.findOne({
       where: {
-        [Op.or]: [{ email: userName }, { userName: userName }]
-      }
+        [Op.or]: [{ email: userName }, { userName: userName }],
+      },
     });
     if (!user) {
       res.status(401).json({
-        message: "userName of email not Found!"
-      })
-    }
-    else {
+        message: "userName of email not Found!",
+      });
+    } else {
       if (password == user.password) {
-        const token = jwt.sign({
-          userId: user.userId
-        }, "Videoster");
+        const token = jwt.sign(
+          {
+            userId: user.userId,
+          },
+          "Videoster"
+        );
         res.status(200).json({
           message: "Successfully LoggedIn",
           userId: user.userId,
           userName: user.userName,
-          token
+          token,
         });
-      }
-      else {
+      } else {
         res.status(401).json({
-          message: "Wrong Credentials!"
+          message: "Wrong Credentials!",
         });
       }
     }
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err);
     res.status(401).json({
-      message: "Some Error Occured!"
-    })
+      message: "Some Error Occured!",
+    });
   }
-}
+};
 
 exports.Register = async (req, res, next) => {
   const { userName, password, email } = req.body;
@@ -53,16 +53,15 @@ exports.Register = async (req, res, next) => {
     await users.create({
       userName,
       email,
-      password
+      password,
     });
     res.status(200).json({
-      message: "Registration Successful"
+      message: "Registration Successful",
     });
-  }
-  catch (arr) {
+  } catch (arr) {
     console.log(err);
     res.status(401).json({
-      message: "Some Error Occured!"
+      message: "Some Error Occured!",
     });
   }
-}
+};

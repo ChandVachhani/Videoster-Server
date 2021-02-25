@@ -6,22 +6,22 @@ const users = sequelize.define("users", {
     type: Sequelize.INTEGER,
     autoIncrement: true,
     allowNull: false,
-    primaryKey: true
+    primaryKey: true,
   },
   userName: {
     type: Sequelize.STRING,
     allowNull: false,
-    unique: true
+    unique: true,
   },
   email: {
     type: Sequelize.STRING,
     allowNull: false,
-    unique: true
+    unique: true,
   },
   password: {
     type: Sequelize.STRING,
-    allowNull: false
-  }
-})
+    allowNull: false,
+  },
+});
 
 module.exports = users;

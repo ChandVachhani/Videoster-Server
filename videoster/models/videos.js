@@ -6,7 +6,7 @@ const videos = sequelize.define("videos", {
     type: Sequelize.STRING,
     allowNull: false,
     unique: true,
-    primaryKey: true
+    primaryKey: true,
   },
   description: {
     type: Sequelize.STRING(500),
@@ -14,16 +14,16 @@ const videos = sequelize.define("videos", {
   },
   avatarDefault: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   avatarHigh: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   title: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
-})
+});
 
 module.exports = videos;

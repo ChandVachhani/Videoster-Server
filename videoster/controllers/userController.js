@@ -1,6 +1,7 @@
 const categories = require("../models/categories");
 const users = require("../models/users");
 const channels = require("../models/channels");
+const videos = require("../models/videos");
 
 const { YT } = require("../apis/YT");
 
@@ -9,100 +10,109 @@ exports.addCategory = async (req, res, next) => {
   try {
     category = req.user.userId + "." + category;
     const x = await req.user.createCategory({
-      name: category
+      name: category,
     });
     res.status(200).json({
-      message: "Category Successfully added!"
+      message: "Category Successfully added!",
     });
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err);
     res.status(401).json({
-      message: "Some Error Occured!"
+      message: "Some Error Occured!",
     });
   }
-}
+};
 
 exports.searchChannels = async (req, res, next) => {
   const { searchWord } = req.body;
   try {
-    const result = await YT.get('/search', {
+    const result = await YT.get("/search", {
       params: {
         maxResult: 5,
         part: "snippet",
         q: searchWord,
-        type: "channel"
-      }
+        type: "channel",
+      },
     });
     let data = result.data.items;
     data = data.map((item) => {
-      return item.id.channelId
+      return item.id.channelId;
     });
     req.body.channelIds = data;
     next();
-  }
-  catch (err) {
+  } catch (err) {
     res.status(401).json({
       message: "Some Error occured in fetching channels from YT!",
-      err
-    })
+      err,
+    });
   }
-}
+};
 
 exports.searchChannelsById = async (req, res, next) => {
   const { channelIds } = req.body;
   try {
-    let channels = [];
+    let requiredChannels = [];
     for (i in channelIds) {
       channelId = channelIds[i];
-      const result = await YT.get('/channels', {
+      const result = await YT.get("/channels", {
         params: {
           part: "snippet,contentDetails,statistics",
-          id: channelId
-        }
+          id: channelId,
+        },
       });
       let data = result.data.items[0];
-      channels.push(data);
+      requiredChannels.push(data);
     }
     res.status(200).json({
-      data: channels
+      data: requiredChannels,
     });
-  }
-  catch (err) {
+  } catch (err) {
     res.status(401).json({
       message: "Some Error occured in fetching channel from YT!",
-      err
-    })
+      err,
+    });
   }
-}
+};
 
 exports.addChannels = async (req, res, next) => {
-  let { category, givenchannels } = req.body;
-  console.log(category, givenchannels);
+  let { category } = req.params;
+  const givenchannels = req.body.channels;
   try {
     category = req.user.userId + "." + category;
     const requiredCategory = await categories.findOne({
       where: {
-        name: category
-      }
+        name: category,
+      },
     });
     if (!requiredCategory) {
       res.status(401).json({
-        message: "category Not Found!"
+        message: "category Not Found!",
       });
     }
     let channelIds = [];
+    let shouldfetch = [];
     for (i in givenchannels) {
-      const channel = await requiredCategory.createChannel({
-        channelId: givenchannels[i].channelId,
-        name: givenchannels[i].name,
-        description: givenchannels[i].description,
-        avatarDefault: givenchannels[i].avatarDefault,
-        avatarHigh: givenchannels[i].avatarHigh,
-        viewsCount: givenchannels[i].viewsCount,
-        subscribersCount: givenchannels[i].subscribersCount,
-        videoCount: givenchannels[i].videoCount
+      const requiredChannel = await channels.findOne({
+        where: {
+          channelId: givenchannels[i].channelId,
+        },
       });
+      if (!requiredChannel) {
+        shouldfetch.push(1);
+        const channel = await requiredCategory.createChannel({
+          channelId: givenchannels[i].channelId,
+          name: givenchannels[i].name,
+          description: givenchannels[i].description,
+          avatarDefault: givenchannels[i].avatarDefault,
+          avatarHigh: givenchannels[i].avatarHigh,
+          viewsCount: givenchannels[i].viewsCount,
+          subscribersCount: givenchannels[i].subscribersCount,
+          videoCount: givenchannels[i].videoCount,
+        });
+        await channel.addCategory(requiredCategory);
+      } else {
+        shouldfetch.push(0);
+      }
       givenchannels[i] = {
         channelId: givenchannels[i].channelId,
         name: givenchannels[i].name,
@@ -111,114 +121,150 @@ exports.addChannels = async (req, res, next) => {
         avatarHigh: givenchannels[i].avatarHigh,
         viewsCount: givenchannels[i].viewsCount,
         subscribersCount: givenchannels[i].subscribersCount,
-        videoCount: givenchannels[i].videoCount
-      }
-      await channel.addCategory(requiredCategory);
+        videoCount: givenchannels[i].videoCount,
+      };
       channelIds.push(givenchannels[i].channelId);
     }
     req.body.channels = givenchannels;
     req.body.channelIds = channelIds;
+    req.body.shouldfetch = shouldfetch;
     next();
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err);
     res.status(401).json({
-      message: "Some Error Occured in addchannels!"
+      message: "Some Error Occured in addchannels!",
     });
   }
-}
+};
 
 exports.addVideos = async (req, res, next) => {
-  const { channelIds } = req.body;
+  const { channelIds, shouldfetch } = req.body;
   const givenChannels = req.body.channels;
   try {
     for (i in channelIds) {
       const channelId = channelIds[i];
-      const result = await YT.get('/search', {
-        params: {
-          part: "snippet",
-          channelId,
-          maxResult: 2,
-          order: "date",
-          type: "video"
-        }
-      });
-      const fetchedVideos = result.data.items;
-
       const requiredChannel = await channels.findOne({
         where: {
-          channelId
-        }
+          channelId,
+        },
       });
+      if (shouldfetch[i]) {
+        const result = await YT.get("/search", {
+          params: {
+            part: "snippet",
+            channelId,
+            maxResult: 2,
+            order: "date",
+            type: "video",
+          },
+        });
+        fetchedVideos = result.data.items;
+      } else {
+        fetchedVideos = await requiredChannel.getVideos();
+      }
+
       if (!requiredChannel) {
         res.status(401).json({
-          message: "channel Not Found!"
+          message: "channel Not Found!",
         });
       }
-      for (ind in fetchedVideos) {
-        await requiredChannel.createVideo({
-          videoId: fetchedVideos[ind].id.videoId,
-          description: fetchedVideos[ind].snippet.description,
-          avatarDefault: fetchedVideos[ind].snippet.thumbnails.default.url,
-          avatarHigh: fetchedVideos[ind].snippet.thumbnails.high.url,
-          title: fetchedVideos[ind].snippet.title
-        });
-        fetchedVideos[ind] = {
-          videoId: fetchedVideos[ind].id.videoId,
-          description: fetchedVideos[ind].snippet.description,
-          avatarDefault: fetchedVideos[ind].snippet.thumbnails.default.url,
-          avatarHigh: fetchedVideos[ind].snippet.thumbnails.high.url,
-          title: fetchedVideos[ind].snippet.title
+      if (shouldfetch[i]) {
+        for (ind in fetchedVideos) {
+          await requiredChannel.createVideo({
+            videoId: fetchedVideos[ind].id.videoId,
+            description: fetchedVideos[ind].snippet.description,
+            avatarDefault: fetchedVideos[ind].snippet.thumbnails.default.url,
+            avatarHigh: fetchedVideos[ind].snippet.thumbnails.high.url,
+            title: fetchedVideos[ind].snippet.title,
+          });
+          fetchedVideos[ind] = {
+            videoId: fetchedVideos[ind].id.videoId,
+            description: fetchedVideos[ind].snippet.description,
+            avatarDefault: fetchedVideos[ind].snippet.thumbnails.default.url,
+            avatarHigh: fetchedVideos[ind].snippet.thumbnails.high.url,
+            title: fetchedVideos[ind].snippet.title,
+          };
+        }
+      } else {
+        for (ind in fetchedVideos) {
+          fetchedVideos[ind] = {
+            videoId: fetchedVideos[ind].videoId,
+            description: fetchedVideos[ind].description,
+            avatarDefault: fetchedVideos[ind].avatarDefault,
+            avatarHigh: fetchedVideos[ind].avatarHigh,
+            title: fetchedVideos[ind].title,
+          };
         }
       }
       givenChannels[i].videos = fetchedVideos;
     }
     res.status(200).json({
       message: "Channels and Videos Successfully added!",
-      channels: givenChannels
+      channels: givenChannels,
     });
-  }
-  catch (err) {
+  } catch (err) {
     console.log(err);
     res.status(401).json({
-      message: "Some Error Occured in adding Videos!"
+      message: "Some Error Occured in adding Videos!",
     });
   }
-}
+};
 
 exports.getCategories = async (req, res, next) => {
   try {
-    let requiredData = {};
     const categories = await req.user.getCategories();
-    for (i in categories) {
-      const category = categories[i];
-      const channels = await category.getChannels();
-
-      for (j in channels) {
-        const channel = channels[j];
-        const videos = await channel.getVideos();
-        channels[j] = {
-          channelId: channels[j].channelId,
-          name: channels[j].name,
-          description: channels[j].description,
-          avatarDefault: channels[j].avatarDefault,
-          avatarHigh: channels[j].avatarHigh,
-          viewsCount: channels[j].viewsCount,
-          subscribersCount: channels[j].subscribersCount,
-          videoCount: channels[j].videoCount,
-          videos
-        }
-      }
-      requiredData[categories[i].dataValues.name.split(".")[1]] = channels;
-    }
+    console.log("--", categories);
     res.status(200).json({
-      requiredData
-    })
-  }
-  catch (err) {
+      requiredData,
+    });
+  } catch (err) {
     console.log(err);
     res.status(401).json({
       message: "Some Error Occured in fetching categories!",
     });
   }
-}
+};
+
+exports.getChannels = async (req, res, next) => {
+  try {
+    const { category } = req.params;
+    category = req.user.userId + "." + category;
+    const requiredCategory = await categories.findOne({
+      where: {
+        name: category,
+      },
+    });
+    if (!requiredCategory) {
+      res.status(401).json({
+        message: "Some Error Occured in fetching categories!",
+      });
+    }
+    let requiredData = [];
+    const requiredChannels = await requiredCategory.getChannels();
+
+    for (j in requiredChannels) {
+      const channel = requiredChannels[j];
+      const requiredVideos = await channel.getVideos();
+      requiredChannels[j] = {
+        channelId: channel.channelId,
+        name: channel.name,
+        description: channel.description,
+        avatarDefault: channel.avatarDefault,
+        avatarHigh: channel.avatarHigh,
+        viewsCount: channel.viewsCount,
+        subscribersCount: channel.subscribersCount,
+        videoCount: channel.videoCount,
+        requiredVideos,
+      };
+    }
+    requiredData = requiredChannels;
+    res.status(200).json({
+      requiredData,
+    });
+  } catch (err) {
+    res.status(401).json({
+      message: "Some error occured in getting channels!",
+      err,
+    });
+  }
+};

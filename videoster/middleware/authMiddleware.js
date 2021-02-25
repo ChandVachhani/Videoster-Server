@@ -10,22 +10,26 @@ exports.verifyLogin = async (req, res, next) => {
     if (payload) {
       const { userId } = payload;
       console.log(userId);
-      req.user = await users.findOne({
+      const user = await users.findOne({
         where: {
-          userId
-        }
+          userId,
+        },
       });
+      if (!user) {
+        res.status(401).json({
+          message: "Not Authorized!",
+        });
+      }
+      req.user = user;
       next();
-    }
-    else {
+    } else {
       res.status(401).json({
-        message: "Not Authorized!"
+        message: "Not Authorized!",
       });
     }
-  }
-  catch (err) {
+  } catch (err) {
     res.status(401).json({
-      message: "Can not decode token!"
+      message: "Can not decode token!",
     });
   }
-}
+};

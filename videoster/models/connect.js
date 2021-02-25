@@ -9,18 +9,18 @@ users.hasMany(categories, {
   onDelete: "CASCADE",
   foreignKey: {
     name: "fk_userId",
-    allowNull: false
-  }
+    allowNull: false,
+  },
 });
 
 // categories-channels
 
 categories.belongsToMany(channels, {
-  through: "CategoryChannels"
+  through: "CategoryChannels",
 });
 
 channels.belongsToMany(categories, {
-  through: "CategoryChannels"
+  through: "CategoryChannels",
 });
 
 // channels-videos
@@ -29,6 +29,6 @@ channels.hasMany(videos, {
   onDelete: "CASCADE",
   foreignKey: {
     name: "fk_channelId",
-    allowNull: false
-  }
+    allowNull: false,
+  },
 });

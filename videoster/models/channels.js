@@ -6,11 +6,11 @@ const channels = sequelize.define("channels", {
     type: Sequelize.STRING,
     allowNull: false,
     unique: true,
-    primaryKey: true
+    primaryKey: true,
   },
   name: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   description: {
     type: Sequelize.STRING(500),
@@ -18,15 +18,15 @@ const channels = sequelize.define("channels", {
   },
   avatarDefault: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   avatarHigh: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   viewsCount: {
     type: Sequelize.INTEGER,
-    allowNull: false
+    allowNull: false,
   },
   subscribersCount: {
     type: Sequelize.INTEGER,
@@ -34,8 +34,8 @@ const channels = sequelize.define("channels", {
   },
   videoCount: {
     type: Sequelize.INTEGER,
-    allowNull: false
+    allowNull: false,
   },
-})
+});
 
 module.exports = channels;
