@@ -50,10 +50,13 @@ exports.Login = async (req, res, next) => {
 exports.Register = async (req, res, next) => {
   const { userName, password, email } = req.body;
   try {
-    await users.create({
+    const user = await users.create({
       userName,
       email,
       password,
+    });
+    await user.createCategory({
+      name: user.dataValues.userId + ".General",
     });
     res.status(200).json({
       message: "Registration Successful",

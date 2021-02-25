@@ -212,10 +212,12 @@ exports.addVideos = async (req, res, next) => {
 
 exports.getCategories = async (req, res, next) => {
   try {
-    const categories = await req.user.getCategories();
-    console.log("--", categories);
+    let requiredCategories = await req.user.getCategories();
+    requiredCategories = requiredCategories.map((cat) => {
+      return cat.dataValues.name.split(".")[1];
+    });
     res.status(200).json({
-      requiredData,
+      requiredData: requiredCategories,
     });
   } catch (err) {
     console.log(err);
@@ -227,7 +229,7 @@ exports.getCategories = async (req, res, next) => {
 
 exports.getChannels = async (req, res, next) => {
   try {
-    const { category } = req.params;
+    let { category } = req.params;
     category = req.user.userId + "." + category;
     const requiredCategory = await categories.findOne({
       where: {
@@ -254,7 +256,7 @@ exports.getChannels = async (req, res, next) => {
         viewsCount: channel.viewsCount,
         subscribersCount: channel.subscribersCount,
         videoCount: channel.videoCount,
-        requiredVideos,
+        videos: requiredVideos,
       };
     }
     requiredData = requiredChannels;
