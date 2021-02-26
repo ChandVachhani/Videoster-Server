@@ -109,10 +109,10 @@ exports.addChannels = async (req, res, next) => {
           subscribersCount: givenchannels[i].subscribersCount,
           videoCount: givenchannels[i].videoCount,
         });
-        await channel.addCategory(requiredCategory);
       } else {
         shouldfetch.push(0);
       }
+      await requiredChannel.addCategory(requiredCategory);
       givenchannels[i] = {
         channelId: givenchannels[i].channelId,
         name: givenchannels[i].name,
@@ -128,6 +128,7 @@ exports.addChannels = async (req, res, next) => {
     req.body.channels = givenchannels;
     req.body.channelIds = channelIds;
     req.body.shouldfetch = shouldfetch;
+    console.log("ShouldFetch ==> ", shouldfetch);
     next();
   } catch (err) {
     console.log(err);
