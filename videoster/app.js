@@ -38,4 +38,4 @@ app.use(authMiddleware.verifyLogin);
 
 app.use("/users", user);
 
-app.listen(3001);
+app.listen(process.env.PORT || 3001);
