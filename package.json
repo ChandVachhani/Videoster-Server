@@ -1,0 +1,20 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "heroku-prebuild": "cd videoster && npm install && npm run build",
+    "start": "cd videoster && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChandVachhani/Videoster-Server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ChandVachhani/Videoster-Server/issues"
+  },
+  "homepage": "https://github.com/ChandVachhani/Videoster-Server#readme"
+}
