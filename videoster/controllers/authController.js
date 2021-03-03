@@ -21,6 +21,7 @@ exports.Login = async (req, res, next) => {
       });
     } else {
       if (password == user.password) {
+        console.log("++++", user);
         const token = jwt.sign(
           {
             userId: user.userId,

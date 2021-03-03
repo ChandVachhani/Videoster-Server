@@ -105,9 +105,9 @@ exports.addChannels = async (req, res, next) => {
           description: givenchannels[i].description,
           avatarDefault: givenchannels[i].avatarDefault,
           avatarHigh: givenchannels[i].avatarHigh,
-          viewsCount: givenchannels[i].viewsCount,
-          subscribersCount: givenchannels[i].subscribersCount,
-          videoCount: givenchannels[i].videoCount,
+          viewsCount: givenchannels[i].viewsCount + "",
+          subscribersCount: givenchannels[i].subscribersCount + "",
+          videoCount: givenchannels[i].videoCount + "",
         });
         await channel.addCategory(requiredCategory);
       } else {
@@ -120,9 +120,9 @@ exports.addChannels = async (req, res, next) => {
         description: givenchannels[i].description,
         avatarDefault: givenchannels[i].avatarDefault,
         avatarHigh: givenchannels[i].avatarHigh,
-        viewsCount: givenchannels[i].viewsCount,
-        subscribersCount: givenchannels[i].subscribersCount,
-        videoCount: givenchannels[i].videoCount,
+        viewsCount: givenchannels[i].viewsCount + "",
+        subscribersCount: givenchannels[i].subscribersCount + "",
+        videoCount: givenchannels[i].videoCount + "",
       };
       channelIds.push(givenchannels[i].channelId);
     }
@@ -255,9 +255,9 @@ exports.getChannels = async (req, res, next) => {
         description: channel.description,
         avatarDefault: channel.avatarDefault,
         avatarHigh: channel.avatarHigh,
-        viewsCount: channel.viewsCount,
-        subscribersCount: channel.subscribersCount,
-        videoCount: channel.videoCount,
+        viewsCount: channel.viewsCount - 0,
+        subscribersCount: channel.subscribersCount - 0,
+        videoCount: channel.videoCount - 0,
         videos: requiredVideos,
       };
     }
