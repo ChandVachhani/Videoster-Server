@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 
 app.use("/chand", (req, res, next) => {
   res.status(200).json({
-    message: "welcome!!!!!!!!!",
+    message: "Its chand",
   });
 });
 
