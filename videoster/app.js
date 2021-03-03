@@ -13,6 +13,12 @@ const db = require("./utils/database");
 
 app.use(bodyParser.json());
 
+app.use("/chand", (req, res, next) => {
+  res.status(200).json({
+    message: "welcome",
+  });
+});
+
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
