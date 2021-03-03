@@ -177,6 +177,7 @@ exports.addVideos = async (req, res, next) => {
             description: fetchedVideos[ind].snippet.description,
             avatarDefault: fetchedVideos[ind].snippet.thumbnails.default.url,
             avatarHigh: fetchedVideos[ind].snippet.thumbnails.high.url,
+            avatarMedium: fetchedVideos[ind].snippet.thumbnails.medium.url,
             title: fetchedVideos[ind].snippet.title,
           });
           fetchedVideos[ind] = {
@@ -184,6 +185,7 @@ exports.addVideos = async (req, res, next) => {
             description: fetchedVideos[ind].snippet.description,
             avatarDefault: fetchedVideos[ind].snippet.thumbnails.default.url,
             avatarHigh: fetchedVideos[ind].snippet.thumbnails.high.url,
+            avatarMedium: fetchedVideos[ind].snippet.thumbnails.medium.url,
             title: fetchedVideos[ind].snippet.title,
           };
         }
@@ -194,6 +196,7 @@ exports.addVideos = async (req, res, next) => {
             description: fetchedVideos[ind].description,
             avatarDefault: fetchedVideos[ind].avatarDefault,
             avatarHigh: fetchedVideos[ind].avatarHigh,
+            avatarMedium: fetchedVideos[ind].avatarMedium,
             title: fetchedVideos[ind].title,
           };
         }

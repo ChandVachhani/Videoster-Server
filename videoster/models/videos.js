@@ -20,6 +20,10 @@ const videos = sequelize.define("videos", {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  avatarMedium: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
   title: {
     type: Sequelize.STRING,
     allowNull: false,
