@@ -109,10 +109,11 @@ exports.addChannels = async (req, res, next) => {
           subscribersCount: givenchannels[i].subscribersCount,
           videoCount: givenchannels[i].videoCount,
         });
+        await channel.addCategory(requiredCategory);
       } else {
         shouldfetch.push(0);
+        await requiredChannel.addCategory(requiredCategory);
       }
-      await requiredChannel.addCategory(requiredCategory);
       givenchannels[i] = {
         channelId: givenchannels[i].channelId,
         name: givenchannels[i].name,
