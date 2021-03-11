@@ -5,7 +5,10 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const auth = require("./routes/auth");
-const user = require("./routes/users");
+const users = require("./routes/users");
+const categories = require("./routes/categories");
+const channels = require("./routes/channels");
+const YT = require("./routes/YT");
 
 const authMiddleware = require("./middleware/authMiddleware");
 
@@ -15,7 +18,7 @@ app.use(bodyParser.json());
 
 app.use("/chand", (req, res, next) => {
   res.status(200).json({
-    message: "welcome!!!",
+    message: "Its chand",
   });
 });
 
@@ -33,9 +36,10 @@ app.use(cors());
 db.sync();
 
 app.use("/auth", auth);
-
 app.use(authMiddleware.verifyLogin);
-
-app.use("/users", user);
+app.use("/users", users);
+app.use("/categories", categories);
+app.use("/channels", channels);
+app.use("/YT", YT);
 
 app.listen(process.env.PORT || 3001);
