@@ -34,7 +34,7 @@ exports.getChannels = async (req, res, next) => {
 
 exports.getChannel = async (req, res, next) => {
   try {
-    const channelId = req.body.channelId;
+    const channelId = req.params.channelId;
     const result = await YT.get("/channels", {
       params: {
         part: "snippet,contentDetails,statistics",
@@ -55,7 +55,7 @@ exports.getChannel = async (req, res, next) => {
 
 exports.getVideos = async (req, res, next) => {
   try {
-    const channelId = req.body.channelId;
+    const channelId = req.params.channelId;
     const result = await YT.get("/search", {
       params: {
         part: "snippet",
