@@ -5,5 +5,6 @@ const categoryController = require("../controllers/categoryController");
 
 router.get("/:categoryId/channels", categoryController.getChannels);
 router.post("/:categoryId/channels", categoryController.addChannel);
+router.use("/:categoryId", categoryController.deleteCategory);
 
 module.exports = router;
