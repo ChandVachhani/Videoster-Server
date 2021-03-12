@@ -95,3 +95,28 @@ exports.addChannel = async (req, res, next) => {
     });
   }
 };
+
+exports.deleteCategory = async (req, res, next) => {
+  try {
+    let givenCategory = req.user.userId + "." + req.params.categoryId;
+    const requiredCategory = await categories.findOne({
+      where: {
+        name: givenCategory,
+      },
+    });
+    if (!requiredCategory) {
+      res.status(401).json({
+        message: "Category not found!",
+      });
+    }
+    await requiredCategory.destroy();
+    res.status(200).json({
+      message: "successfully removed category :)",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(401).json({
+      message: "Some Error Occured in remove category!",
+    });
+  }
+};

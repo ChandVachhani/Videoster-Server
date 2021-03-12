@@ -76,3 +76,28 @@ exports.addVideo = async (req, res, next) => {
     });
   }
 };
+
+exports.deleteChannel = async (req, res, next) => {
+  try {
+    let givenChannelId = req.params.channelId;
+    const requiredChannel = await channels.findOne({
+      where: {
+        channelId: givenChannelId,
+      },
+    });
+    if (!requiredChannel) {
+      res.status(401).json({
+        message: "channel not found!",
+      });
+    }
+    await requiredChannel.destroy();
+    res.status(200).json({
+      message: "successfully removed channel :)",
+    });
+  } catch (err) {
+    res.status(401).json({
+      message: "Some error occured in deleting channel!",
+      err,
+    });
+  }
+};

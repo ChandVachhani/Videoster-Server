@@ -5,5 +5,6 @@ const channelController = require("../controllers/channelController");
 
 router.get("/:channelId/videos", channelController.getVideos);
 router.post("/:channelId/videos", channelController.addVideo);
+router.use("/:channelId", channelController.deleteChannel);
 
 module.exports = router;

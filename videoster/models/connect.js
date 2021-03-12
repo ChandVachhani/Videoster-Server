@@ -9,7 +9,6 @@ users.hasMany(categories, {
   onDelete: "CASCADE",
   foreignKey: {
     name: "fk_userId",
-    allowNull: false,
   },
 });
 
