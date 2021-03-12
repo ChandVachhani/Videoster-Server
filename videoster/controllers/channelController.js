@@ -79,6 +79,18 @@ exports.addVideo = async (req, res, next) => {
 
 exports.deleteChannel = async (req, res, next) => {
   try {
+    let givenCategory = req.user.userId + "." + req.params.categoryId;
+    const requiredCategory = await categories.findOne({
+      where: {
+        name: givenCategory,
+      },
+    });
+    if (!requiredCategory) {
+      res.status(401).json({
+        message: "Category not found!",
+      });
+    }
+
     let givenChannelId = req.params.channelId;
     const requiredChannel = await channels.findOne({
       where: {
@@ -90,7 +102,8 @@ exports.deleteChannel = async (req, res, next) => {
         message: "channel not found!",
       });
     }
-    await requiredChannel.destroy();
+
+    await requiredCategory.removeChannel(requiredChannel);
     res.status(200).json({
       message: "successfully removed channel :)",
     });
