@@ -79,7 +79,7 @@ exports.addVideo = async (req, res, next) => {
 
 exports.deleteChannel = async (req, res, next) => {
   try {
-    let givenCategory = req.user.userId + "." + req.data.category;
+    let givenCategory = req.user.userId + "." + req.body.category;
     const requiredCategory = await categories.findOne({
       where: {
         name: givenCategory,
