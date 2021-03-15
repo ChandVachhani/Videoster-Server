@@ -22,6 +22,10 @@ const users = sequelize.define("users", {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  token: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
 });
 
 module.exports = users;

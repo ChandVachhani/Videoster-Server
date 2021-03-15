@@ -5,5 +5,6 @@ const userController = require("../controllers/userController");
 
 router.get("/:userId/categories", userController.getCategories);
 router.post("/:userId/categories", userController.addCategory);
+router.get("/:userId/token", userController.getTokens);
 
 module.exports = router;

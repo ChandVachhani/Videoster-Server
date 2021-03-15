@@ -8,6 +8,9 @@ const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
 const bcrype = require("bcrypt");
 
+const UIDGenerator = require("uid-generator");
+const uidgen = new UIDGenerator();
+
 exports.Login = async (req, res, next) => {
   const { userName, password } = req.body;
   try {
@@ -53,13 +56,18 @@ exports.Register = async (req, res, next) => {
   const { userName, password, email } = req.body;
   try {
     const hashedPassword = await bcrype.hash(password, 12);
+    const token = (await uidgen.generate()).toString();
+    console.log("token => ", token);
     const user = await users.create({
       userName,
       email,
       password: hashedPassword,
+      token,
     });
+    const tokenCategory = (await uidgen.generate()).toString();
     await user.createCategory({
       name: user.dataValues.userId + ".General",
+      token: tokenCategory,
     });
     res.status(200).json({
       message: "Registration Successful",
