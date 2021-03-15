@@ -6,6 +6,7 @@ const connect = require("../models/connect");
 const jwt = require("jsonwebtoken");
 
 const { Op } = require("sequelize");
+const bcrype = require("bcrypt");
 
 exports.Login = async (req, res, next) => {
   const { userName, password } = req.body;
@@ -20,7 +21,7 @@ exports.Login = async (req, res, next) => {
         message: "userName of email not Found!",
       });
     } else {
-      if (password == user.password) {
+      if (await bcrype.compare(password, user.password)) {
         console.log("++++", user);
         const token = jwt.sign(
           {
@@ -51,10 +52,11 @@ exports.Login = async (req, res, next) => {
 exports.Register = async (req, res, next) => {
   const { userName, password, email } = req.body;
   try {
+    const hashedPassword = await bcrype.hash(password, 12);
     const user = await users.create({
       userName,
       email,
-      password,
+      password: hashedPassword,
     });
     await user.createCategory({
       name: user.dataValues.userId + ".General",
