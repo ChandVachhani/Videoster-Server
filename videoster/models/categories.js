@@ -7,6 +7,10 @@ const categories = sequelize.define("categories", {
     allowNull: false,
     unique: true,
   },
+  token: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
 });
 
 module.exports = categories;

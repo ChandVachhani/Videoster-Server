@@ -6,6 +6,10 @@ const connect = require("../models/connect");
 const jwt = require("jsonwebtoken");
 
 const { Op } = require("sequelize");
+const bcrype = require("bcrypt");
+
+const UIDGenerator = require("uid-generator");
+const uidgen = new UIDGenerator();
 
 exports.Login = async (req, res, next) => {
   const { userName, password } = req.body;
@@ -20,7 +24,7 @@ exports.Login = async (req, res, next) => {
         message: "userName of email not Found!",
       });
     } else {
-      if (password == user.password) {
+      if (await bcrype.compare(password, user.password)) {
         console.log("++++", user);
         const token = jwt.sign(
           {
@@ -51,13 +55,19 @@ exports.Login = async (req, res, next) => {
 exports.Register = async (req, res, next) => {
   const { userName, password, email } = req.body;
   try {
+    const hashedPassword = await bcrype.hash(password, 12);
+    const token = (await uidgen.generate()).toString();
+    console.log("token => ", token);
     const user = await users.create({
       userName,
       email,
-      password,
+      password: hashedPassword,
+      token,
     });
+    const tokenCategory = (await uidgen.generate()).toString();
     await user.createCategory({
       name: user.dataValues.userId + ".General",
+      token: tokenCategory,
     });
     res.status(200).json({
       message: "Registration Successful",

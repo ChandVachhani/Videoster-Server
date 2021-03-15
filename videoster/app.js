@@ -9,6 +9,7 @@ const users = require("./routes/users");
 const categories = require("./routes/categories");
 const channels = require("./routes/channels");
 const YT = require("./routes/YT");
+const tokens = require("./routes/tokens");
 
 const authMiddleware = require("./middleware/authMiddleware");
 
@@ -41,5 +42,6 @@ app.use("/users", users);
 app.use("/categories", categories);
 app.use("/channels", channels);
 app.use("/YT", YT);
+app.use("/tokens", tokens);
 
 app.listen(process.env.PORT || 3001);
