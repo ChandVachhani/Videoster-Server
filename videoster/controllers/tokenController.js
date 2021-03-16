@@ -21,7 +21,7 @@ exports.getData = async (req, res, next) => {
           token,
         },
       });
-      if (arr[ind].dataValues.name.split(".")[1] == "General") {
+      if (requiredCategory.dataValues.name.split(".")[1] == "GENERAL") {
         res.status(401).json({
           message: "You can not access default category!",
         });
@@ -30,7 +30,7 @@ exports.getData = async (req, res, next) => {
     }
     let data = {};
     for (ind in arr) {
-      if (arr[ind].dataValues.name.split(".")[1] == "General") {
+      if (arr[ind].dataValues.name.split(".")[1] == "GENERAL") {
         continue;
       }
       let requiredChannels = await arr[ind].getChannels();
