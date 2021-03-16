@@ -66,7 +66,7 @@ exports.Register = async (req, res, next) => {
     });
     const tokenCategory = (await uidgen.generate()).toString();
     await user.createCategory({
-      name: user.dataValues.userId + ".General",
+      name: user.dataValues.userId + ".GENERAL",
       token: tokenCategory,
     });
     res.status(200).json({

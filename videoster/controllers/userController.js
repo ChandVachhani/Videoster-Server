@@ -49,7 +49,7 @@ exports.getTokens = async (req, res, next) => {
     result.forEach((curr) => {
       tokens[curr.dataValues.name.split(".")[1]] = curr.dataValues.token;
     });
-    tokens["General"] = req.user.token;
+    tokens["GENERAL"] = req.user.token;
     res.status(200).json({
       tokens,
       message: "Category Successfully added!",

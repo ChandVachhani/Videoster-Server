@@ -45,7 +45,7 @@ exports.addChannel = async (req, res, next) => {
   try {
     const givenchannel = req.body.channel;
     let givenCategory = req.user.userId + "." + req.params.categoryId;
-    if (req.params.categoryId == "General") {
+    if (req.params.categoryId == "GENERAL") {
       res.status(401).json({
         message: "You can not add channels in default category!",
       });
