@@ -36,17 +36,6 @@ exports.getData = async (req, res, next) => {
       let requiredChannels = await arr[ind].getChannels();
       data[arr[ind].dataValues.name.split(".")[1]] = [];
       for (i in requiredChannels) {
-        let requiredVideos = await requiredChannels[i].getVideos();
-        requiredChannels.videos = requiredVideos.map((video) => {
-          return {
-            videoId: video.dataValues.videoId,
-            description: video.dataValues.description,
-            avatarDefault: video.dataValues.avatarDefault,
-            avatarHigh: video.dataValues.avatarHigh,
-            avatarMedium: video.dataValues.avatarMedium,
-            title: video.dataValues.title,
-          };
-        });
         data[arr[ind].dataValues.name.split(".")[1]].push({
           channelId: requiredChannels[i].dataValues.channelId,
           name: requiredChannels[i].dataValues.name,
@@ -57,7 +46,6 @@ exports.getData = async (req, res, next) => {
           subscribersCount:
             requiredChannels[i].dataValues.subscribersCount + "",
           videoCount: requiredChannels[i].dataValues.videoCount + "",
-          videos: requiredVideos,
         });
       }
     }
