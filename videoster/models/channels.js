@@ -13,7 +13,7 @@ const channels = sequelize.define("channels", {
     allowNull: false,
   },
   description: {
-    type: Sequelize.STRING(1500),
+    type: Sequelize.STRING(2500),
     // allowNull: false
   },
   avatarDefault: {

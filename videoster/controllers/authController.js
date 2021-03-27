@@ -72,10 +72,10 @@ exports.Register = async (req, res, next) => {
     res.status(200).json({
       message: "Registration Successful",
     });
-  } catch (arr) {
+  } catch (err) {
     console.log(err);
     res.status(401).json({
-      message: "Some Error Occured!",
+      message: "userName or email already Exist",
     });
   }
 };

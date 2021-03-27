@@ -125,3 +125,30 @@ exports.deleteCategory = async (req, res, next) => {
     });
   }
 };
+
+exports.renameCategory = async (req, res, next) => {
+  try {
+    let givenCategory = req.user.userId + "." + req.params.categoryId;
+    const requiredCategory = await categories.findOne({
+      where: {
+        name: givenCategory,
+      },
+    });
+    if (!requiredCategory) {
+      res.status(401).json({
+        message: "Category not found!",
+      });
+    }
+    await requiredCategory.update({
+      name: req.user.userId + "." + req.body.category,
+    });
+    res.status(200).json({
+      message: "successfully updated category :)",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(401).json({
+      message: "Some Error Occured in update category!",
+    });
+  }
+};

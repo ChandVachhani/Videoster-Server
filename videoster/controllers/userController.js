@@ -37,7 +37,7 @@ exports.addCategory = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     res.status(401).json({
-      message: "Some Error Occured in adding category!",
+      message: "Category name already exist!",
     });
   }
 };

@@ -33,6 +33,7 @@ exports.addVideo = async (req, res, next) => {
   try {
     const channelId = req.params.channelId;
     const givenVideo = req.body.video;
+    console.log("******************", givenVideo);
     const requiredChannel = await channels.findOne({
       where: {
         channelId,
@@ -43,7 +44,7 @@ exports.addVideo = async (req, res, next) => {
         message: "Channel not found!",
       });
     }
-
+    console.log("******************", channelId);
     const requiedVideo = await videos.findOne({
       where: {
         videoId: givenVideo.videoId,
@@ -56,7 +57,10 @@ exports.addVideo = async (req, res, next) => {
       avatarHigh: givenVideo.avatarHigh,
       avatarMedium: givenVideo.avatarMedium,
       title: givenVideo.title,
+      views: givenVideo.views,
+      publishedAt: givenVideo.publishedAt,
     };
+    console.log("******************", videoData);
     if (!requiedVideo) {
       await requiredChannel.createVideo({
         ...videoData,
