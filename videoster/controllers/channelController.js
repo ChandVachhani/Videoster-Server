@@ -16,10 +16,16 @@ exports.getVideos = async (req, res, next) => {
         message: "Channel not found!",
       });
     }
-
     const requiredVideos = await requiredChannel.getVideos();
+
+    let videos = requiredVideos.splice(req.params.offset, req.params.limit);
+    for (let i in videos) {
+      videos[i].dataValues.channelName = requiredChannel.dataValues.name;
+      videos[i].dataValues.channelAvatarDefault =
+        requiredChannel.dataValues.avatarDefault;
+    }
     res.status(200).json({
-      videos: requiredVideos,
+      videos: videos,
     });
   } catch (err) {
     res.status(401).json({

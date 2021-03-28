@@ -8,18 +8,14 @@ const videos = sequelize.define("videos", {
     unique: true,
     primaryKey: true,
   },
-  description: {
-    type: Sequelize.STRING(2500),
-    // allowNull: false
-  },
-  avatarDefault: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  avatarHigh: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
+  // avatarDefault: {
+  //   type: Sequelize.STRING,
+  //   allowNull: false,
+  // },
+  // avatarHigh: {
+  //   type: Sequelize.STRING,
+  //   allowNull: false,
+  // },
   avatarMedium: {
     type: Sequelize.STRING,
     allowNull: false,
