@@ -5,10 +5,11 @@ const videos = require("../models/videos");
 
 exports.getVideos = async (req, res, next) => {
   try {
-    const channelId = req.params.channelId;
+    // const channelIds = req.body.channelIds;
+    console.log("//////", req.data);
     const requiredChannel = await channels.findOne({
       where: {
-        channelId,
+        channelId: channelIds,
       },
     });
     if (!requiredChannel) {
@@ -23,7 +24,7 @@ exports.getVideos = async (req, res, next) => {
     });
   } catch (err) {
     res.status(401).json({
-      message: "Some error occured in getting channels!",
+      message: "Some error occured in getting videos!",
       err,
     });
   }
