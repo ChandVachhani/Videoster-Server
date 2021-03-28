@@ -22,12 +22,12 @@ exports.getChannels = async (req, res, next) => {
       return {
         channelId: channel.channelId,
         name: channel.name,
-        description: channel.description,
+        // description: channel.description,
         avatarDefault: channel.avatarDefault,
-        avatarHigh: channel.avatarHigh,
-        viewsCount: channel.viewsCount - 0,
-        subscribersCount: channel.subscribersCount - 0,
-        videoCount: channel.videoCount - 0,
+        // avatarHigh: channel.avatarHigh,
+        // viewsCount: channel.viewsCount - 0,
+        // subscribersCount: channel.subscribersCount - 0,
+        // videoCount: channel.videoCount - 0,
       };
     });
     res.status(200).json({
