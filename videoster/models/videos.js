@@ -2,11 +2,16 @@ const sequelize = require("../utils/database");
 const Sequelize = require("sequelize");
 
 const videos = sequelize.define("videos", {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
   videoId: {
     type: Sequelize.STRING,
     allowNull: false,
     unique: true,
-    primaryKey: true,
   },
   // avatarDefault: {
   //   type: Sequelize.STRING,
