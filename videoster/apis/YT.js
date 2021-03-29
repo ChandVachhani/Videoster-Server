@@ -6,6 +6,6 @@ const KEY = "AIzaSyAgnnwHjqsxd0u1HdlRXQyLmZ5wDznKOhM";
 exports.YT = axios.create({
   baseURL: "https://www.googleapis.com/youtube/v3",
   params: {
-    key: MY_KEY,
+    key: KEY,
   },
 });
