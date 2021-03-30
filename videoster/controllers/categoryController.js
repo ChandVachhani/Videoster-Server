@@ -22,12 +22,12 @@ exports.getChannels = async (req, res, next) => {
       return {
         channelId: channel.channelId,
         name: channel.name,
-        description: channel.description,
+        // description: channel.description,
         avatarDefault: channel.avatarDefault,
-        avatarHigh: channel.avatarHigh,
-        viewsCount: channel.viewsCount - 0,
-        subscribersCount: channel.subscribersCount - 0,
-        videoCount: channel.videoCount - 0,
+        // avatarHigh: channel.avatarHigh,
+        // viewsCount: channel.viewsCount - 0,
+        // subscribersCount: channel.subscribersCount - 0,
+        // videoCount: channel.videoCount - 0,
       };
     });
     res.status(200).json({
@@ -45,6 +45,11 @@ exports.addChannel = async (req, res, next) => {
   try {
     const givenchannel = req.body.channel;
     let givenCategory = req.user.userId + "." + req.params.categoryId;
+    if (req.params.categoryId == "GENERAL") {
+      res.status(401).json({
+        message: "You can not add channels in default category!",
+      });
+    }
 
     const requiredCategory = await categories.findOne({
       where: {
@@ -92,6 +97,58 @@ exports.addChannel = async (req, res, next) => {
     console.log(err);
     res.status(401).json({
       message: "Some Error Occured in addchannels!",
+    });
+  }
+};
+
+exports.deleteCategory = async (req, res, next) => {
+  try {
+    let givenCategory = req.user.userId + "." + req.params.categoryId;
+    const requiredCategory = await categories.findOne({
+      where: {
+        name: givenCategory,
+      },
+    });
+    if (!requiredCategory) {
+      res.status(401).json({
+        message: "Category not found!",
+      });
+    }
+    await requiredCategory.destroy();
+    res.status(200).json({
+      message: "successfully removed category :)",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(401).json({
+      message: "Some Error Occured in remove category!",
+    });
+  }
+};
+
+exports.renameCategory = async (req, res, next) => {
+  try {
+    let givenCategory = req.user.userId + "." + req.params.categoryId;
+    const requiredCategory = await categories.findOne({
+      where: {
+        name: givenCategory,
+      },
+    });
+    if (!requiredCategory) {
+      res.status(401).json({
+        message: "Category not found!",
+      });
+    }
+    await requiredCategory.update({
+      name: req.user.userId + "." + req.body.category,
+    });
+    res.status(200).json({
+      message: "successfully updated category :)",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(401).json({
+      message: "Some Error Occured in update category!",
     });
   }
 };

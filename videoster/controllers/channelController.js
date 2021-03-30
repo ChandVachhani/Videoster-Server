@@ -16,10 +16,16 @@ exports.getVideos = async (req, res, next) => {
         message: "Channel not found!",
       });
     }
-
     const requiredVideos = await requiredChannel.getVideos();
+
+    let videos = requiredVideos.splice(req.params.offset, req.params.limit);
+    for (let i in videos) {
+      videos[i].dataValues.channelName = requiredChannel.dataValues.name;
+      videos[i].dataValues.channelAvatarDefault =
+        requiredChannel.dataValues.avatarDefault;
+    }
     res.status(200).json({
-      videos: requiredVideos,
+      videos: videos,
     });
   } catch (err) {
     res.status(401).json({
@@ -33,6 +39,7 @@ exports.addVideo = async (req, res, next) => {
   try {
     const channelId = req.params.channelId;
     const givenVideo = req.body.video;
+    console.log("******************", givenVideo);
     const requiredChannel = await channels.findOne({
       where: {
         channelId,
@@ -43,7 +50,7 @@ exports.addVideo = async (req, res, next) => {
         message: "Channel not found!",
       });
     }
-
+    console.log("******************", channelId);
     const requiedVideo = await videos.findOne({
       where: {
         videoId: givenVideo.videoId,
@@ -56,7 +63,10 @@ exports.addVideo = async (req, res, next) => {
       avatarHigh: givenVideo.avatarHigh,
       avatarMedium: givenVideo.avatarMedium,
       title: givenVideo.title,
+      views: givenVideo.views,
+      publishedAt: givenVideo.publishedAt,
     };
+    console.log("******************", videoData);
     if (!requiedVideo) {
       await requiredChannel.createVideo({
         ...videoData,
@@ -72,6 +82,44 @@ exports.addVideo = async (req, res, next) => {
   } catch (err) {
     res.status(401).json({
       message: "Some error occured in getting channels!",
+      err,
+    });
+  }
+};
+
+exports.deleteChannel = async (req, res, next) => {
+  try {
+    let givenCategory = req.user.userId + "." + req.body.category;
+    const requiredCategory = await categories.findOne({
+      where: {
+        name: givenCategory,
+      },
+    });
+    if (!requiredCategory) {
+      res.status(401).json({
+        message: "Category not found!",
+      });
+    }
+
+    let givenChannelId = req.params.channelId;
+    const requiredChannel = await channels.findOne({
+      where: {
+        channelId: givenChannelId,
+      },
+    });
+    if (!requiredChannel) {
+      res.status(401).json({
+        message: "channel not found!",
+      });
+    }
+
+    await requiredCategory.removeChannel(requiredChannel);
+    res.status(200).json({
+      message: "successfully removed channel :)",
+    });
+  } catch (err) {
+    res.status(401).json({
+      message: "Some error occured in deleting channel!",
       err,
     });
   }

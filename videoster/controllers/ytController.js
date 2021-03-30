@@ -67,13 +67,40 @@ exports.getVideos = async (req, res, next) => {
     });
     data = result.data.items;
 
+    data = data.map((d) => {
+      return d.id.videoId;
+    });
+
     res.status(200).json({
-      videos: data,
+      videoIds: data,
     });
   } catch (err) {
     console.log(err);
     res.status(401).json({
       message: "Some Error Occured in fetching Videos!",
+    });
+  }
+};
+
+exports.getVideo = async (req, res, next) => {
+  try {
+    const videoId = req.params.videoId;
+    const result = await YT.get("/videos", {
+      params: {
+        part: "snippet,contentDetails,statistics",
+        id: videoId,
+      },
+    });
+    data = result.data.items[0];
+    console.log("------------------------", data);
+
+    res.status(200).json({
+      video: data,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(401).json({
+      message: "Some Error Occured in fetching Video!",
     });
   }
 };

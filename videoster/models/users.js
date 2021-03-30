@@ -22,6 +22,14 @@ const users = sequelize.define("users", {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  token: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  isVarified: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 module.exports = users;

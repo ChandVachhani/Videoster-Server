@@ -12,30 +12,30 @@ const channels = sequelize.define("channels", {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  description: {
-    type: Sequelize.STRING(1500),
-    // allowNull: false
-  },
+  // description: {
+  //   type: Sequelize.STRING(2500),
+  //   // allowNull: false
+  // },
   avatarDefault: {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  avatarHigh: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  viewsCount: {
-    type: Sequelize.STRING(100),
-    allowNull: false,
-  },
-  subscribersCount: {
-    type: Sequelize.STRING(100),
-    // allowNull: false
-  },
-  videoCount: {
-    type: Sequelize.STRING(100),
-    allowNull: false,
-  },
+  // avatarHigh: {
+  //   type: Sequelize.STRING,
+  //   allowNull: false,
+  // },
+  // viewsCount: {
+  //   type: Sequelize.STRING(100),
+  //   allowNull: false,
+  // },
+  // subscribersCount: {
+  //   type: Sequelize.STRING(100),
+  //   // allowNull: false
+  // },
+  // videoCount: {
+  //   type: Sequelize.STRING(100),
+  //   allowNull: false,
+  // },
 });
 
 module.exports = channels;
