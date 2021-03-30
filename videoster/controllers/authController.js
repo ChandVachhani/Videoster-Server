@@ -11,7 +11,7 @@ const bcrype = require("bcrypt");
 const UIDGenerator = require("uid-generator");
 const uidgen = new UIDGenerator();
 
-////////// MAILGUN //////////////
+/////////////////////////// MAILGUN //////////////////////////////
 
 const mailgun = require("mailgun-js");
 const DOMAIN = "videoster.tech";
@@ -34,7 +34,7 @@ sendMail = function (reciever_email, email_subject, email_body) {
   });
 };
 
-/////////////////////////////////
+//////////////////////////////////////////////////////////////////
 
 exports.Login = async (req, res, next) => {
   const { userName, password } = req.body;
