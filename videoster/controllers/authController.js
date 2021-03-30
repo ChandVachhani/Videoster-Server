@@ -49,6 +49,11 @@ exports.Login = async (req, res, next) => {
         message: "userName of email not Found!",
       });
     } else {
+      if (!user.dataValues.isVarified) {
+        res.status(401).json({
+          message: "Verify your email First",
+        });
+      }
       if (await bcrype.compare(password, user.password)) {
         console.log("++++", user);
         const token = jwt.sign(
@@ -94,13 +99,43 @@ exports.Register = async (req, res, next) => {
       name: user.dataValues.userId + ".GENERAL",
       token: tokenCategory,
     });
+
+    const content = `http://localhost:3000/varifyEmail/${user.dataValues.token}`;
+    sendMail(email, "Varify Email", content);
     res.status(200).json({
-      message: "Registration Successful",
+      message: "Registration Successful. Check your mail!",
     });
   } catch (err) {
     console.log(err);
     res.status(401).json({
       message: "userName or email already Exist",
+    });
+  }
+};
+
+exports.varifyEmail = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+    const user = await users.findOne({
+      where: {
+        token,
+      },
+    });
+    if (!user) {
+      res.status(401).json({
+        message: "token is Invalid!",
+      });
+    }
+    await user.update({
+      isVarified: true,
+    });
+    res.status(200).json({
+      message: "Check your mail!",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(401).json({
+      message: "Email id or userName does not exist!",
     });
   }
 };
