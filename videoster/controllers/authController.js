@@ -100,7 +100,7 @@ exports.Register = async (req, res, next) => {
       token: tokenCategory,
     });
 
-    const content = `http://localhost:3000/varifyEmail/${user.dataValues.token}`;
+    const content = `https://videoster.tech/varifyEmail/${user.dataValues.token}`;
     sendMail(email, "Varify Email", content);
     res.status(200).json({
       message: "Registration Successful. Check your mail!",
@@ -154,7 +154,7 @@ exports.forgotPassword = async (req, res, next) => {
       });
     }
     const email = user.dataValues.email;
-    const content = `http://localhost:3000/changePassword/${user.dataValues.token}`;
+    const content = `https://videoster.tech/changePassword/${user.dataValues.token}`;
     sendMail(email, "Change Password", content);
     res.status(200).json({
       message: "Check your mail!",
