@@ -46,7 +46,7 @@ exports.Login = async (req, res, next) => {
     });
     if (!user) {
       res.status(401).json({
-        message: "userName of email not Found!",
+        message: "userName or email not Found!",
       });
     } else {
       if (!user.dataValues.isVarified) {
