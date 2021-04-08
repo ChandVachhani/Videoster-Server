@@ -190,7 +190,7 @@ exports.changePassword = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     res.status(401).json({
-      message: "some error in changing pass!",
+      message: "some error in changing pass",
     });
   }
 };
