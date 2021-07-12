@@ -194,3 +194,28 @@ exports.changePassword = async (req, res, next) => {
     });
   }
 };
+
+exports.verifyLogin = async (req, res, next) => {
+    try{
+      const { token } = req.body;
+      const user = await users.findOne({
+        where: {
+          token,
+        },
+      });
+      if (!user) {
+        res.status(401).json({
+          message: "token is Invalid!",
+        });
+      }      
+      res.status(200).json({
+        message: "Successfully verified user!",
+      });
+    }
+    catch(err){
+      console.log(err);
+      res.status(401).json({
+        message: "some error in verifing Login",
+      });
+    }
+}
