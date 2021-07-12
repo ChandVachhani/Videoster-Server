@@ -16,7 +16,7 @@ const uidgen = new UIDGenerator();
 const mailgun = require("mailgun-js");
 const DOMAIN = "videoster.tech";
 const mg = mailgun({
-  apiKey: "987ca0c6b61848e8be31ba7015321b6c-b6d086a8-22e3f7f7",
+  apiKey: process.env.MAILGUN_API_KEY,
   domain: DOMAIN,
 });
 
