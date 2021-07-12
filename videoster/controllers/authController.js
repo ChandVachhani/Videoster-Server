@@ -196,26 +196,35 @@ exports.changePassword = async (req, res, next) => {
 };
 
 exports.verifyLogin = async (req, res, next) => {
-    try{
-      const { token } = req.body;
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const payload = jwt.verify(token, "Videoster");
+    console.log(token);
+    if (payload) {
+      const { userId } = payload;
+      console.log(userId);
       const user = await users.findOne({
         where: {
-          token,
+          userId,
         },
       });
       if (!user) {
         res.status(401).json({
-          message: "token is Invalid!",
+          message: "Not Authorized!",
         });
-      }      
+      }
       res.status(200).json({
-        message: "Successfully verified user!",
+        message: "User Varified!",
+        user,
       });
-    }
-    catch(err){
-      console.log(err);
+    } else {
       res.status(401).json({
-        message: "some error in verifing Login",
+        message: "Not Authorized!",
       });
     }
+  } catch (err) {
+    res.status(401).json({
+      message: "User is not verified!",
+    });
+  }
 }
