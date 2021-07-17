@@ -13,10 +13,12 @@ const uidgen = new UIDGenerator();
 
 /////////////////////////// MAILGUN //////////////////////////////
 
+const {mailgunAPI} = require("../utils/mailgunAPI");
+
 const mailgun = require("mailgun-js");
 const DOMAIN = "videoster.tech";
 const mg = mailgun({
-  apiKey: process.env.MAILGUN_API_KEY,
+  apiKey: process.env.MAILGUN_API_KEY || mailgunAPI,
   domain: DOMAIN,
 });
 
