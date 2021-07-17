@@ -13,12 +13,12 @@ const uidgen = new UIDGenerator();
 
 /////////////////////////// MAILGUN //////////////////////////////
 
-const {mailgunAPI} = require("../utils/mailgunAPI");
+const mailgunAPI = require("../utils/mailgunAPI");
 
 const mailgun = require("mailgun-js");
 const DOMAIN = "videoster.tech";
 const mg = mailgun({
-  apiKey: process.env.MAILGUN_API_KEY || mailgunAPI,
+  apiKey: mailgunAPI,
   domain: DOMAIN,
 });
 
@@ -102,7 +102,7 @@ exports.Register = async (req, res, next) => {
       token: tokenCategory,
     });
 
-    const content = `https://videoster.tech/varifyEmail/${user.dataValues.token}`;
+    const content = `http://localhost:3000/varifyEmail/${user.dataValues.token}`;
     sendMail(email, "Varify Email", content);
     res.status(200).json({
       message: "Registration Successful. Check your mail!",
@@ -143,6 +143,7 @@ exports.varifyEmail = async (req, res, next) => {
 };
 
 exports.forgotPassword = async (req, res, next) => {
+  console.log("chand", mg.apiKey);
   try {
     const { userName } = req.body;
     const user = await users.findOne({
@@ -156,7 +157,7 @@ exports.forgotPassword = async (req, res, next) => {
       });
     }
     const email = user.dataValues.email;
-    const content = `https://videoster.tech/changePassword/${user.dataValues.token}`;
+    const content = `http://localhost:3000/changePassword/${user.dataValues.token}`;
     sendMail(email, "Change Password", content);
     res.status(200).json({
       message: "Check your mail!",
@@ -169,7 +170,7 @@ exports.forgotPassword = async (req, res, next) => {
   }
 };
 
-exports.changePassword = async (req, res, next) => {
+exports.changePassword = async (req, res, next) => {  
   try {
     const { password, token } = req.body;
     const user = await users.findOne({
